@@ -12,17 +12,9 @@
 			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - webgl physically based material<br/>
 			<a href="http://www.polycount.com/forum/showthread.php?t=130641" target="_blank" rel="noopener">Cerberus(FFVII Gun) model</a> by Andrew Maximov.
 		</div>
-
-		<script type="importmap">
-		{
-			"imports": {
-				"three": "../build/three.module.js"
-			}
-		}
-		</script>
 		<script type="module">
 
-			import * as THREE from 'three';
+			import * as THREE from '../build/three.module.js';
 
 			import Stats from './jsm/libs/stats.module.js';
 
