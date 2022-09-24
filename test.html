@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        color: white;
+        background-color: grey;
+      }
+      code {
+        color: greenyellow;
+        white-space: pre;
+      }
+    </style>
+  </head>
+	<body>
+		<script src="https://unpkg.com/three@0.144.0/build/three.js"></script>
+    This should render BG->FG: Blue, Green, Red.
+    <code id="code"></code>
+		<script id="script">
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+      camera.position.set(.5, .5, 2);      
+      const renderer = new THREE.WebGLRenderer({depth: false});
+      renderer.setSize( 300,300 );
+      document.body.appendChild( renderer.domElement );
+
+      const xz = new THREE.Mesh(new THREE.BoxGeometry(1,0,1), new THREE.MeshBasicMaterial({color: "red",   depthWrite: false}));
+      xz.renderOrder = 3;
+      scene.add(xz);
+      const xy = new THREE.Mesh(new THREE.BoxGeometry(1,1,0), new THREE.MeshBasicMaterial({color: "green", depthWrite: false}));
+      xy.renderOrder = 2;
+      scene.add(xy);
+
+      const yz = new THREE.Mesh(new THREE.BoxGeometry(0,1,1), new THREE.MeshBasicMaterial({color: "blue",  depthWrite: false}));
+      yz.renderOrder = 1;
+      const yzg = new THREE.Group();
+      yzg.renderOrder = 1; // UNEXPECTED BEHAVIOR HERE
+      yzg.add(yz)
+      scene.add(yzg);
+
+      renderer.render( scene, camera );
+		</script>
+    <h3>Type <code>yzg.renderOrder = 0; renderer.render( scene, camera )</code> into the dev console to fix the rendering.</h3>
+    <script>
+      document.getElementById('code').innerHTML = document.getElementById('script').innerHTML;
+    </script>
+	</body>
+</html>
