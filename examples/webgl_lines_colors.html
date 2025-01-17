@@ -27,13 +27,16 @@
 			import * as THREE from 'three';
 
 			import * as GeometryUtils from 'three/addons/utils/GeometryUtils.js';
+			import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+			import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+			import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 			let mouseX = 0, mouseY = 0;
 
 			let windowHalfX = window.innerWidth / 2;
 			let windowHalfY = window.innerHeight / 2;
 
-			let camera, scene, renderer;
+			let camera, scene, renderer, composer;
 
 			init();
 
@@ -49,6 +52,17 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.setAnimationLoop( animate );
 				document.body.appendChild( renderer.domElement );
+
+				// If 1px WebGL lines are rendered directly to the screen, the antialiasing is performed
+				// incorrectly which results in a "ropey" appearance.
+
+				// Create an intermediate target with antialiasing enabled
+				let target = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, { samples: 4 });
+				composer = new EffectComposer( renderer, target );
+				// Render lines to sRGB space and then perform linear antialiasing.
+				composer.addPass( new RenderPass( scene, camera ) );
+				// Convert the linearly antialiased lines to sRGB antialiased lines.
+				composer.addPass( new OutputPass() );
 
 				//
 
@@ -218,7 +232,7 @@
 
 				}
 
-				renderer.render( scene, camera );
+				composer.render( scene, camera );
 
 			}
 
